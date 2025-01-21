@@ -24,5 +24,8 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    NavigationView {
+        HomeView()
+            .navigationBarHidden(true)
+    }
 }
