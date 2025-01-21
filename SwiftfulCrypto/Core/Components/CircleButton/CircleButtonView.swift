@@ -33,7 +33,7 @@ struct CircleButtonView: View {
             .padding()
         CircleButtonView(iconName: "plus")
             .padding()
-            .colorScheme(.dark)
+            .preferredColorScheme(.dark)
     }
 }
 
