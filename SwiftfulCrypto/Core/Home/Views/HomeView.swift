@@ -20,11 +20,13 @@ struct HomeView: View {
             VStack {
                 HStack {
                     CircleButtonView(iconName: showPortfolio ? "plus" : "info")
+                        .animation(.none, value: showPortfolio)
                     Spacer()
                     Text(showPortfolio ? "Portfolio" : "Live Prices")
                         .font(.headline)
                         .fontWeight(.heavy)
                         .foregroundColor(Color.theme.accent)
+                        .animation(.none)
                     Spacer()
                     CircleButtonView(iconName: "chevron.right")
                         .rotationEffect(Angle(degrees: showPortfolio ? 180 : 0))
