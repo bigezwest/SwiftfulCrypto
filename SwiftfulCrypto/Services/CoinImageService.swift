@@ -12,13 +12,16 @@ import Combine
 class CoinImageService {
     
     @Published var image: UIImage? = nil
-    var imageSubscription: AnyCancellable?
-        
-    init(urlString: String) {
-        getCoinImage(urlString: urlString)
+    private var imageSubscription: AnyCancellable?
+    private var coin: CoinModel
+    
+    init(coin: CoinModel) {
+        self.coin = coin
+        getCoinImage()
     }
-    private func getCoinImage(urlString: String) {
-        guard let url = URL(string: urlString) else { return }
+    
+    private func getCoinImage() {
+        guard let url = URL(string: coin.image) else { return }
         
         imageSubscription = NetworkingManager.download(url: url)
             .tryMap( { (data) -> UIImage? in
