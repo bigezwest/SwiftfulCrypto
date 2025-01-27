@@ -25,7 +25,7 @@ struct StatisticsView: View {
                     .rotationEffect(
                         Angle(
                             degrees:(stat.percentageChage ?? 0) >= 0 ? 0 : 180))
-                Text(stat.percentageChage?.asPercentStirng() ?? "")
+                Text(stat.percentageChage?.asPercentString() ?? "")
                     .font(.caption)
                     .bold()
             }
