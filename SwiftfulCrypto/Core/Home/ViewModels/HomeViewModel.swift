@@ -5,26 +5,25 @@
 //  Created by Thomas on 1/22/25.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 class HomeViewModel: ObservableObject {
-    
+
     @Published var statistics: [StatisticModel] = []
-    
     @Published var allCoins: [CoinModel] = []
     @Published var portfolioCoins: [CoinModel] = []
-    
     @Published var searchText: String = ""
-    
+
     private let coinDataService = CoinDataService()
     private let marketDataService = MarketDataService()
+    private let portfolioDataService = PortfolioDataService()
     private var cancellables = Set<AnyCancellable>()
-    
+
     init() {
         addSubscribers()
     }
-    
+
     func addSubscribers() {
         // Updates all coins
         $searchText
@@ -38,30 +37,51 @@ class HomeViewModel: ObservableObject {
         // Updates market data
         marketDataService.$marketData
             .map(mapGlobalMarkteData)
-            .sink{ [weak self] (returnedStats) in
+            .sink { [weak self] (returnedStats) in
                 self?.statistics = returnedStats
             }
             .store(in: &cancellables)
+        // Update portfolio Coins
+        $allCoins
+            .combineLatest(portfolioDataService.$savedEntities)
+            .map { (coinModels, portfolioEntities) -> [CoinModel] in
+                coinModels
+                    .compactMap { (coin) -> CoinModel? in
+                        guard let entity = portfolioEntities.first(where: { $0.coinID == coin.id }) else {
+                            return nil
+                        }
+                        return coin.updateHoldings(amount: entity.amount)
+                    }
+            }
+            .sink { [weak self] (returnedCoins) in
+                self?.portfolioCoins = returnedCoins
+            }
+            .store(in: &cancellables)
     }
-    private func filterCoins(text: String, coins: [CoinModel] ) -> [CoinModel] {
+    func updatePortfolio(coin: CoinModel, amount: Double) {
+        portfolioDataService.updatePortfolio(coin: coin, amount: amount)
+    }
+    private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else {
             return coins
         }
         let lowercaasedText = text.lowercased()
-        
-        return coins.filter{ (coin) -> Bool in
-            return coin.name.lowercased().contains(lowercaasedText) ||
-            coin.symbol.lowercased().contains(lowercaasedText) ||
-            coin.id.lowercased().contains(lowercaasedText)
+
+        return coins.filter { (coin) -> Bool in
+            return coin.name.lowercased().contains(lowercaasedText)
+                || coin.symbol.lowercased().contains(lowercaasedText)
+                || coin.id.lowercased().contains(lowercaasedText)
         }
     }
-    private func mapGlobalMarkteData(marketDataModel: MarketDataModel?) -> [StatisticModel] {
+    private func mapGlobalMarkteData(marketDataModel: MarketDataModel?)
+        -> [StatisticModel]
+    {
         var stats: [StatisticModel] = []
-        
+
         guard let data = marketDataModel else {
             return stats
         }
-        
+
         let marketCap = StatisticModel(
             title: "Market Cap",
             value: data.marketCap,
@@ -80,7 +100,7 @@ class HomeViewModel: ObservableObject {
             marketCap,
             volume,
             btcDominance,
-            portfolio
+            portfolio,
         ])
         return stats
     }

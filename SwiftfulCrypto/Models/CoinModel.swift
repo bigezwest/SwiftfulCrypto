@@ -55,7 +55,7 @@ struct CoinModel: Identifiable, Codable {
         case priceChangePercentage24HInCurrency = "price_change_percentage_24h_in_currency"
         case currentHoldings
     }
-    func updateHolding(amount: Double) -> CoinModel {
+    func updateHoldings(amount: Double) -> CoinModel {
         return CoinModel(
             id: id,
             symbol: symbol,
