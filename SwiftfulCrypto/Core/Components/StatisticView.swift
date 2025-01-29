@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StatisticsView: View {
+struct StatisticView: View {
     
     let stat: StatisticModel
     
@@ -39,11 +39,11 @@ struct StatisticsView: View {
 struct StatisticView_Preview: PreviewProvider {
     static var previews: some View {
         Group {
-            StatisticsView(stat: dev.stat1)
+            StatisticView(stat: dev.stat1)
                 .previewLayout(.sizeThatFits)
-            StatisticsView(stat: dev.stat2)
+            StatisticView(stat: dev.stat2)
                 .previewLayout(.sizeThatFits)
-            StatisticsView(stat: dev.stat3)
+            StatisticView(stat: dev.stat3)
                 .previewLayout(.sizeThatFits)
         }
     }
