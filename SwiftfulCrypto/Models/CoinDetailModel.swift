@@ -25,16 +25,19 @@ struct CoinDetailModel: Codable {
         case description
         case links
     }
+    var readableDescription: String? {
+        return description?.en?.removingHTMLOccurrences
+    }
 }
 
 // MARK: - Links
 struct Links: Codable {
     let homepage: [String]?
-    let subredditURL: String?
+    let redditURL: String?
     
-    enum COdingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case homepage
-        case subredditURL = "subreddit_url"
+        case redditURL = "subreddit_url"
     }
 }
 
